@@ -130,7 +130,7 @@ proxy-groups:
 
   - name: TikTok
     type: select
-    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    proxies: [Proxy, "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/TikTok.png
 
   - name: BiliBili
@@ -152,6 +152,11 @@ proxy-groups:
     type: select
     proxies: [DIRECT, Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Game.png
+
+  - name: 广告拦截
+    type: select
+    proxies: [REJECT, DIRECT]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Advertising.png
 
   # > 地区节点组（合并两个机场的节点，自动测速选最快，对应 Surge 的 smart 组）
   - name: "🇭🇰 香港节点"
@@ -347,11 +352,28 @@ rule-providers:
     interval: 86400
     path: ./ruleset/ChinaCIDR.list
     url: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Rules/ChinaCIDR.list
+  # > 广告拦截 / 隐私保护 / 病毒与钓鱼域名拦截（SukkaW，Mihomo 版）
+  reject_domainset:
+    type: http
+    behavior: domain
+    format: text
+    interval: 86400
+    path: ./ruleset/reject_domainset.txt
+    url: https://ruleset.skk.moe/Clash/domainset/reject.txt
+  reject_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    path: ./ruleset/reject_non_ip.txt
+    url: https://ruleset.skk.moe/Clash/non_ip/reject.txt
 
 # ---------------- 规则 ----------------
 rules:
-  # > 广告拦截（默认禁用，需要时取消注释并自行添加 rule-provider）
-  # - RULE-SET,reject,REJECT
+  # > 广告拦截 / 隐私保护 / 病毒与钓鱼域名拦截
+  # （某个网站被误杀时，在面板里把「广告拦截」组切到 DIRECT 即可临时关闭）
+  - RULE-SET,reject_domainset,广告拦截
+  - RULE-SET,reject_non_ip,广告拦截
 
   # > 智能助理
   - RULE-SET,AIGC,AIGC
