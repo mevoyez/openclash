@@ -100,7 +100,7 @@ proxy-groups:
 
   - name: AIGC
     type: select
-    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    proxies: [Proxy, "✈️ 机场A", AI]
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/ChatGPT.png
 
   - name: Telegram
@@ -125,7 +125,7 @@ proxy-groups:
 
   - name: Spotify
     type: select
-    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    proxies: [DIRECT, Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Spotify.png
 
   - name: TikTok
@@ -213,6 +213,13 @@ proxy-groups:
     tolerance: 50
     hidden: true
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-Singapore.png
+
+  # > AI 专用组：只取机场B里名称含 AI / GPT / Gemini 的节点
+  - name: AI
+    type: select
+    use: ["机场B"]
+    filter: "AI|(?i:GPT|Gemini)"
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/ChatGPT.png
 
   # > 机场整体手动选择（可单独锁定某个机场的某个节点）
   - name: "✈️ 机场A"
