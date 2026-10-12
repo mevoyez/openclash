@@ -1,15 +1,12 @@
 # ============================================================
 # OpenClash / Mihomo 单 Provider 配置（Sub-Store 组合订阅）
 #
-# 前置条件：在 Sub-Store 中创建名为 OpenClash 的组合订阅，包含机场A和机场B。
-# 本文件已按当前本机 Sub-Store 地址填写 ClashMeta 输出链接；请先验证该链接返回 200。
+# 前置条件：Sub-Store 组合订阅输出链接已从路由器测试 HTTP 200。
+# 只使用一个 SubStore Provider；不要求节点名带 [A]/[B] 前缀。
+# 以后更换或新增机场，只需在 Sub-Store 组合订阅中管理，OpenClash 不用新增 Provider。
 #
-# 保留原配置架构：Proxy、Apple、AIGC、Telegram、Netflix、Disney+、
-# YouTube、Spotify、TikTok、BiliBili、GlobalMedia、Microsoft、Game、
-# 广告拦截、地区组、AI、机场 A/B 筛选组，以及原有分流规则。
-#
-# 注意：如需使用“机场A/机场B”筛选组，请在 Sub-Store 组合订阅中
-# 保留节点前缀 [A] / [B]（或按需修改下面两个组的 filter）。
+# 保留原有服务策略组及地区测速结构，移除按机场名称区分的策略组。
+# 加入 Loyalsoldier 外部规则集，并保留 GeoSite/GeoIP 规则作为补充与兜底。
 # ============================================================
 
 mixed-port: 7890
@@ -57,8 +54,6 @@ dns:
     geoip-code: CN
     ipcidr:
       - 240.0.0.0/4
-      - 0.0.0.0/32
-      - 127.0.0.1/32
   proxy-server-nameserver:
     - https://dns.alidns.com/dns-query
     - https://doh.pub/dns-query
@@ -67,7 +62,7 @@ dns:
 proxy-providers:
   SubStore组合订阅:
     type: http
-    # Sub-Store 组合订阅名称必须创建为 OpenClash；输出目标为 ClashMeta
+    # 使用已验证返回 HTTP 200 的 Sub-Store 组合订阅链接；无需机场名前缀
     url: "http://192.168.11.1:3002/RArdCYx05FqoorulLZ4vkCoPGc9RFXdA/download/collection/substore?target=ClashMeta"
     interval: 3600
     path: ./providers/substore_combined.yaml
@@ -80,20 +75,95 @@ proxy-providers:
     override:
       udp: true
 
+# ---------------- 外部规则集（Loyalsoldier） ----------------
+rule-providers:
+  reject:
+    type: http
+    behavior: domain
+    format: text
+    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt
+    path: ./ruleset/loyalsoldier/reject.yaml
+    interval: 86400
+  private:
+    type: http
+    behavior: domain
+    format: text
+    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt
+    path: ./ruleset/loyalsoldier/private.yaml
+    interval: 86400
+  applications:
+    type: http
+    behavior: classical
+    format: text
+    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt
+    path: ./ruleset/loyalsoldier/applications.yaml
+    interval: 86400
+  proxy:
+    type: http
+    behavior: domain
+    format: text
+    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt
+    path: ./ruleset/loyalsoldier/proxy.yaml
+    interval: 86400
+  direct:
+    type: http
+    behavior: domain
+    format: text
+    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt
+    path: ./ruleset/loyalsoldier/direct.yaml
+    interval: 86400
+  gfw:
+    type: http
+    behavior: domain
+    format: text
+    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt
+    path: ./ruleset/loyalsoldier/gfw.yaml
+    interval: 86400
+  tld-not-cn:
+    type: http
+    behavior: domain
+    format: text
+    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/tld-not-cn.txt
+    path: ./ruleset/loyalsoldier/tld-not-cn.yaml
+    interval: 86400
+  telegramcidr:
+    type: http
+    behavior: ipcidr
+    format: text
+    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt
+    path: ./ruleset/loyalsoldier/telegramcidr.yaml
+    interval: 86400
+  cncidr:
+    type: http
+    behavior: ipcidr
+    format: text
+    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt
+    path: ./ruleset/loyalsoldier/cncidr.yaml
+    interval: 86400
+  lancidr:
+    type: http
+    behavior: ipcidr
+    format: text
+    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt
+    path: ./ruleset/loyalsoldier/lancidr.yaml
+    interval: 86400
+
 # ---------------- 策略组 ----------------
 proxy-groups:
   # 主要手动策略组
   - name: Proxy
     type: select
     proxies:
+      - 自动选择
+      - 故障转移
       - "🇭🇰 香港节点"
       - "🇺🇸 美国节点"
       - "🇯🇵 日本节点"
       - "🇰🇷 韩国节点"
       - "🇹🇼 台湾节点"
       - "🇸🇬 新加坡节点"
-      - "✈️ 机场A"
-      - "✈️ 机场B"
+    # 同时显示组合订阅内所有原始节点，无需 [A]/[B] 前缀
+    use: [SubStore组合订阅]
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Surge.png
 
   - name: Apple
@@ -103,7 +173,7 @@ proxy-groups:
 
   - name: AIGC
     type: select
-    proxies: [Proxy, "✈️ 机场A", AI]
+    proxies: [Proxy, AI]
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/ChatGPT.png
 
   - name: Telegram
@@ -234,26 +304,12 @@ proxy-groups:
     hidden: true
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-Singapore.png
 
-  # AI 手动组：保留 Proxy / 自动选择，并筛选组合订阅内的 AI 节点
+  # AI 手动组：可选总策略、测速/故障转移，也包含组合订阅的全部原始节点
   - name: AI
     type: select
     proxies: [Proxy, 自动选择, 故障转移]
     use: [SubStore组合订阅]
-    filter: '(?i)^\[B\].*(AI|GPT|ChatGPT|Gemini|Claude|AIGC)'
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/ChatGPT.png
-
-  # 可选的机场子集：需要 Sub-Store 输出节点名保留 [A] / [B] 标识
-  - name: "✈️ 机场A"
-    type: select
-    use: [SubStore组合订阅]
-    filter: '(?i)(^\[A\]|机场A)'
-    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Proxy.png
-
-  - name: "✈️ 机场B"
-    type: select
-    use: [SubStore组合订阅]
-    filter: '(?i)(^\[B\]|机场B)'
-    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Proxy.png
 
   # 手动主选择以外的测速/容错选择组
   - name: 自动选择
@@ -275,16 +331,19 @@ proxy-groups:
     lazy: true
     hidden: true
 
-# ---------------- 规则 ----------------
+# ---------------- 分流规则：外部规则集优先，GeoSite/GeoIP 作为补充与兜底 ----------------
 rules:
-  # 局域网及私有网络
+  # 局域网 / 私有域名与 IP
   - GEOSITE,private,DIRECT
-  - GEOIP,private,DIRECT,no-resolve
+  - GEOIP,LAN,DIRECT,no-resolve
+  - RULE-SET,private,DIRECT
+  - RULE-SET,lancidr,DIRECT,no-resolve
 
-  # 广告拦截
+  # 广告：使用独立策略组，可在面板切换 REJECT / DIRECT
+  - RULE-SET,reject,广告拦截
   - GEOSITE,category-ads-all,广告拦截
 
-  # GitHub：提前匹配，避免被后续规则覆盖
+  # 用户希望明确走代理的 GitHub 相关域名
   - DOMAIN-SUFFIX,github.com,Proxy
   - DOMAIN-SUFFIX,githubusercontent.com,Proxy
   - DOMAIN-SUFFIX,githubassets.com,Proxy
@@ -297,14 +356,14 @@ rules:
   - GEOSITE,anthropic,AIGC
   - GEOSITE,category-ai-!cn,AIGC
 
-  # Apple 与 Microsoft
+  # Apple、微软
   - GEOSITE,apple-cn,Apple
   - GEOSITE,apple,Apple
   - GEOSITE,microsoft,Microsoft
 
-  # Telegram、游戏与流媒体
+  # Telegram、游戏、流媒体与国内视频
   - GEOSITE,telegram,Telegram
-  - GEOIP,telegram,Telegram,no-resolve
+  - RULE-SET,telegramcidr,Telegram,no-resolve
   - GEOSITE,category-games,Game
   - GEOSITE,youtube,YouTube
   - GEOSITE,netflix,Netflix
@@ -314,8 +373,18 @@ rules:
   - GEOSITE,tiktok,TikTok
   - GEOSITE,bilibili,BiliBili
 
-  # 国外域名、国内域名、国内 IP 与兜底
+  # 直连软件与常见直连域名
+  - RULE-SET,applications,DIRECT
+  - RULE-SET,direct,DIRECT
+
+  # 外部代理规则：GFWList / 代理域名 / 非中国大陆 TLD
+  - RULE-SET,proxy,Proxy
+  - RULE-SET,gfw,Proxy
+  - RULE-SET,tld-not-cn,Proxy
+
+  # 保留 GeoSite/GeoIP 国内外规则作为补充和兜底
   - GEOSITE,geolocation-!cn,Proxy
   - GEOSITE,cn,DIRECT
-  - GEOIP,CN,DIRECT
+  - RULE-SET,cncidr,DIRECT,no-resolve
+  - GEOIP,CN,DIRECT,no-resolve
   - MATCH,Proxy
