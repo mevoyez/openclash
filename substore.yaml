@@ -1,0 +1,321 @@
+# ============================================================
+# OpenClash / Mihomo 单 Provider 配置（Sub-Store 组合订阅）
+#
+# 前置条件：在 Sub-Store 中创建名为 OpenClash 的组合订阅，包含机场A和机场B。
+# 本文件已按当前本机 Sub-Store 地址填写 ClashMeta 输出链接；请先验证该链接返回 200。
+#
+# 保留原配置架构：Proxy、Apple、AIGC、Telegram、Netflix、Disney+、
+# YouTube、Spotify、TikTok、BiliBili、GlobalMedia、Microsoft、Game、
+# 广告拦截、地区组、AI、机场 A/B 筛选组，以及原有分流规则。
+#
+# 注意：如需使用“机场A/机场B”筛选组，请在 Sub-Store 组合订阅中
+# 保留节点前缀 [A] / [B]（或按需修改下面两个组的 filter）。
+# ============================================================
+
+mixed-port: 7890
+allow-lan: true
+bind-address: "*"
+mode: rule
+log-level: info
+ipv6: false
+unified-delay: true
+tcp-concurrent: true
+# 与当前可正常启动的 openclash-pure.yaml 保持一致；不要改成 off
+find-process-mode: strict
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+# ---------------- DNS ----------------
+dns:
+  enable: true
+  listen: 0.0.0.0:7874
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+    - "+.msftconnecttest.com"
+    - "+.msftncsi.com"
+    - "time.*.com"
+    - "ntp.*.com"
+    - "+.pool.ntp.org"
+    - "localhost.ptlogin2.qq.com"
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  fallback:
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
+      - 0.0.0.0/32
+      - 127.0.0.1/32
+  proxy-server-nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+
+# ---------------- Sub-Store 单一组合订阅 ----------------
+proxy-providers:
+  SubStore组合订阅:
+    type: http
+    # Sub-Store 组合订阅名称必须创建为 OpenClash；输出目标为 ClashMeta
+    url: "http://192.168.11.1:3002/RArdCYx05FqoorulLZ4vkCoPGc9RFXdA/download/collection/substore?target=ClashMeta"
+    interval: 3600
+    path: ./providers/substore_combined.yaml
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5000
+      lazy: true
+    override:
+      udp: true
+
+# ---------------- 策略组 ----------------
+proxy-groups:
+  # 主要手动策略组
+  - name: Proxy
+    type: select
+    proxies:
+      - "🇭🇰 香港节点"
+      - "🇺🇸 美国节点"
+      - "🇯🇵 日本节点"
+      - "🇰🇷 韩国节点"
+      - "🇹🇼 台湾节点"
+      - "🇸🇬 新加坡节点"
+      - "✈️ 机场A"
+      - "✈️ 机场B"
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Surge.png
+
+  - name: Apple
+    type: select
+    proxies: [DIRECT, Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Apple_Arcade.png
+
+  - name: AIGC
+    type: select
+    proxies: [Proxy, "✈️ 机场A", AI]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/ChatGPT.png
+
+  - name: Telegram
+    type: select
+    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Telegram.png
+
+  - name: Netflix
+    type: select
+    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Netflix.png
+
+  - name: "Disney+"
+    type: select
+    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Disney.png
+
+  - name: YouTube
+    type: select
+    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/YouTube.png
+
+  - name: Spotify
+    type: select
+    proxies: [DIRECT, Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Spotify.png
+
+  - name: TikTok
+    type: select
+    proxies: [Proxy, "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/TikTok.png
+
+  - name: BiliBili
+    type: select
+    proxies: [DIRECT, "🇭🇰 香港节点", "🇹🇼 台湾节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Bilibili.png
+
+  - name: GlobalMedia
+    type: select
+    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/GlobalMedia.png
+
+  - name: Microsoft
+    type: select
+    proxies: [DIRECT, Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Windows.png
+
+  - name: Game
+    type: select
+    proxies: [DIRECT, Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Game.png
+
+  - name: 广告拦截
+    type: select
+    proxies: [REJECT, DIRECT]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Advertising.png
+
+  # 地区节点组：统一从 Sub-Store 组合订阅筛选并测速
+  - name: "🇭🇰 香港节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇭🇰|香港|Hong\s?Kong|\bHK\b|\bHKG\b)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-Hong_Kong.png
+
+  - name: "🇺🇸 美国节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇺🇸|美国|United\s?States|\bUSA\b|\bUS\b)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-United_States.png
+
+  - name: "🇯🇵 日本节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇯🇵|日本|Japan|\bJP\b)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-Japan.png
+
+  - name: "🇰🇷 韩国节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇰🇷|韩国|Korea|\bKR\b|South\s?Korea)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-South_Korea.png
+
+  - name: "🇹🇼 台湾节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇹🇼|台湾|Taiwan|\bTW\b)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-China.png
+
+  - name: "🇸🇬 新加坡节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇸🇬|新加坡|Singapore|\bSG\b)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-Singapore.png
+
+  # AI 手动组：保留 Proxy / 自动选择，并筛选组合订阅内的 AI 节点
+  - name: AI
+    type: select
+    proxies: [Proxy, 自动选择, 故障转移]
+    use: [SubStore组合订阅]
+    filter: '(?i)^\[B\].*(AI|GPT|ChatGPT|Gemini|Claude|AIGC)'
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/ChatGPT.png
+
+  # 可选的机场子集：需要 Sub-Store 输出节点名保留 [A] / [B] 标识
+  - name: "✈️ 机场A"
+    type: select
+    use: [SubStore组合订阅]
+    filter: '(?i)(^\[A\]|机场A)'
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Proxy.png
+
+  - name: "✈️ 机场B"
+    type: select
+    use: [SubStore组合订阅]
+    filter: '(?i)(^\[B\]|机场B)'
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Proxy.png
+
+  # 手动主选择以外的测速/容错选择组
+  - name: 自动选择
+    type: url-test
+    use: [SubStore组合订阅]
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+
+  - name: 故障转移
+    type: fallback
+    use: [SubStore组合订阅]
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    timeout: 5000
+    lazy: true
+    hidden: true
+
+# ---------------- 规则 ----------------
+rules:
+  # 局域网及私有网络
+  - GEOSITE,private,DIRECT
+  - GEOIP,private,DIRECT,no-resolve
+
+  # 广告拦截
+  - GEOSITE,category-ads-all,广告拦截
+
+  # GitHub：提前匹配，避免被后续规则覆盖
+  - DOMAIN-SUFFIX,github.com,Proxy
+  - DOMAIN-SUFFIX,githubusercontent.com,Proxy
+  - DOMAIN-SUFFIX,githubassets.com,Proxy
+  - DOMAIN-SUFFIX,githubapp.com,Proxy
+  - DOMAIN-SUFFIX,github.io,Proxy
+  - DOMAIN-SUFFIX,ghcr.io,Proxy
+
+  # AI 服务
+  - GEOSITE,openai,AIGC
+  - GEOSITE,anthropic,AIGC
+  - GEOSITE,category-ai-!cn,AIGC
+
+  # Apple 与 Microsoft
+  - GEOSITE,apple-cn,Apple
+  - GEOSITE,apple,Apple
+  - GEOSITE,microsoft,Microsoft
+
+  # Telegram、游戏与流媒体
+  - GEOSITE,telegram,Telegram
+  - GEOIP,telegram,Telegram,no-resolve
+  - GEOSITE,category-games,Game
+  - GEOSITE,youtube,YouTube
+  - GEOSITE,netflix,Netflix
+  - GEOIP,netflix,Netflix,no-resolve
+  - GEOSITE,disney,Disney+
+  - GEOSITE,spotify,Spotify
+  - GEOSITE,tiktok,TikTok
+  - GEOSITE,bilibili,BiliBili
+
+  # 国外域名、国内域名、国内 IP 与兜底
+  - GEOSITE,geolocation-!cn,Proxy
+  - GEOSITE,cn,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,Proxy
