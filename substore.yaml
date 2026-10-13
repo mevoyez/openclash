@@ -173,7 +173,7 @@ proxy-groups:
 
   - name: AIGC
     type: select
-    proxies: [Proxy, AI]
+    proxies: [Proxy, AI节点]
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/ChatGPT.png
 
   - name: Telegram
@@ -304,12 +304,17 @@ proxy-groups:
     hidden: true
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-Singapore.png
 
-  # AI 手动组：可选总策略、测速/故障转移，也包含组合订阅的全部原始节点
-  - name: AI
-    type: select
-    proxies: [Proxy, 自动选择, 故障转移]
+  - name: "AI节点"
+    type: url-test
     use: [SubStore组合订阅]
-    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/ChatGPT.png
+    filter: '(?i)(AI|GPT|ChatGPT|OpenAI|Gemini|Claude|Copilot|LLM|专线|优化)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    disable-udp: false
 
   # 手动主选择以外的测速/容错选择组
   - name: 自动选择
