@@ -105,6 +105,13 @@ rule-providers:
     url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt
     path: ./ruleset/loyalsoldier/proxy.yaml
     interval: 86400
+      ai:
+    type: http
+    behavior: classical
+    format: yaml
+    url: https://ddgksf2013.top/filter/Ai.yaml
+    path: ./ruleset/loyalsoldier/ai.yaml
+    interval: 86400
   direct:
     type: http
     behavior: domain
@@ -173,7 +180,7 @@ proxy-groups:
 
   - name: AIGC
     type: select
-    proxies: [Proxy, AI节点]
+    proxies: [AI节点, Proxy]
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/ChatGPT.png
 
   - name: Telegram
@@ -203,7 +210,7 @@ proxy-groups:
 
   - name: TikTok
     type: select
-    proxies: [Proxy, "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    proxies: ["🇸🇬 新加坡节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点"]
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/TikTok.png
 
   - name: BiliBili
@@ -228,7 +235,7 @@ proxy-groups:
 
   - name: 广告拦截
     type: select
-    proxies: [REJECT, DIRECT]
+    proxies: [REJECT]
     icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Advertising.png
 
   # 地区节点组：统一从 Sub-Store 组合订阅筛选并测速
@@ -358,6 +365,7 @@ rules:
   - DOMAIN-SUFFIX,ghcr.io,Proxy
 
   # AI 服务
+  - RULE-SET,ai,AIGC
   - GEOSITE,openai,AIGC
   - GEOSITE,anthropic,AIGC
   - GEOSITE,category-ai-!cn,AIGC
