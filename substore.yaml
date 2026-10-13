@@ -80,7 +80,7 @@ rule-providers:
   reject:
     type: http
     behavior: domain
-    format: text
+    format: yaml
     url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt
     path: ./ruleset/loyalsoldier/reject.yaml
     interval: 86400
@@ -94,7 +94,7 @@ rule-providers:
   applications:
     type: http
     behavior: classical
-    format: text
+    format: yaml
     url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt
     path: ./ruleset/loyalsoldier/applications.yaml
     interval: 86400
@@ -115,7 +115,7 @@ rule-providers:
   gfw:
     type: http
     behavior: domain
-    format: text
+    format: yaml
     url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt
     path: ./ruleset/loyalsoldier/gfw.yaml
     interval: 86400
@@ -129,21 +129,21 @@ rule-providers:
   telegramcidr:
     type: http
     behavior: ipcidr
-    format: text
+    format: yaml
     url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt
     path: ./ruleset/loyalsoldier/telegramcidr.yaml
     interval: 86400
   cncidr:
     type: http
     behavior: ipcidr
-    format: text
+    format: yaml
     url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt
     path: ./ruleset/loyalsoldier/cncidr.yaml
     interval: 86400
   lancidr:
     type: http
     behavior: ipcidr
-    format: text
+    format: yaml
     url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt
     path: ./ruleset/loyalsoldier/lancidr.yaml
     interval: 86400
@@ -307,7 +307,7 @@ proxy-groups:
   - name: "AI节点"
     type: url-test
     use: [SubStore组合订阅]
-    filter: '(?i)(AI|GPT|ChatGPT|OpenAI|Gemini|Claude|Copilot|LLM|专线|优化)'
+    filter: '(?i)(AI|GPT|ChatGPT|OpenAI|Gemini|Claude|Copilot|LLM)'
     url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
@@ -315,6 +315,7 @@ proxy-groups:
     lazy: true
     hidden: true
     disable-udp: false
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/AI.png
 
   # 手动主选择以外的测速/容错选择组
   - name: 自动选择
