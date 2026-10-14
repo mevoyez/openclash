@@ -685,6 +685,7 @@ rules:
 
   # 保留 GeoSite/GeoIP 国内外规则作为补充和兜底
   - GEOSITE,geolocation-!cn,Proxy
+  - GEOSITE,geolocation-cn,DIRECT
   - GEOSITE,cn,DIRECT
   - RULE-SET,cncidr,DIRECT,no-resolve
   - GEOIP,CN,DIRECT,no-resolve
