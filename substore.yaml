@@ -13,12 +13,115 @@ mixed-port: 7890
 allow-lan: true
 bind-address: "*"
 mode: rule
-log-level: info
-ipv6: false
+log-level: warning
+ipv6: true
 unified-delay: true
 tcp-concurrent: true
-# 与当前可正常启动的 openclash-pure.yaml 保持一致；不要改成 off
-find-process-mode: strict
+profile:
+  store-selected: true
+  store-fake-ip: true
+geodata-mode: true
+geodata-loader: memconservative
+geo-auto-update: true
+geo-update-interval: 24
+geox-url:
+  geoip: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
+  geosite: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
+  mmdb: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: true
+  sniff:
+    TLS:
+      ports:
+      - 443
+      - 8443
+    HTTP:
+      ports:
+      - 80
+      - 8080-8880
+      override-destination: true
+    QUIC:
+      ports:
+      - 443
+      - 8443
+  skip-domain:
+  - Mijia Cloud
+  - dlg.io.mi.com
+  - "+.push.apple.com"
+  - "+.googlevideo.com"
+  - "+.qq.com"
+  - "+.tencent.com"
+  - "+.wechat.com"
+  - "+.servicewechat.com"
+  - "+.gtimg.com"
+  - "+.gtimg.cn"
+  - "+.qpic.cn"
+  - "+.qlogo.cn"
+  - "+.tenpay.com"
+  - "+.myqcloud.com"
+  - "+.qcloud.com"
+  - "+.douyin.com"
+  - "+.douyincdn.com"
+  - "+.douyinpic.com"
+  - "+.douyinstatic.com"
+  - "+.douyinliving.com"
+  - "+.iesdouyin.com"
+  - "+.douyinvod.com"
+  - "+.douyinvideo.net"
+  - "+.amemv.com"
+  - "+.snssdk.com"
+  - "+.byteimg.com"
+  - "+.bytecdn.cn"
+  - "+.ibytedtos.com"
+  - "+.zijieapi.com"
+  - "+.pstatp.com"
+  - "+.toutiao.com"
+  - "+.toutiaovod.com"
+  - "+.bytedance.net"
+  - "+.xiaohongshu.com"
+  - "+.xhscdn.com"
+  - "+.xhscdn.net"
+  - "+.xhslink.com"
+  - "+.xhsimg.com"
+  - "+.taobao.com"
+  - "+.tmall.com"
+  - "+.tbcdn.cn"
+  - "+.alicdn.com"
+  - "+.alibaba.com"
+  - "+.alibabausercontent.com"
+  - "+.alipay.com"
+  - "+.alipayobjects.com"
+  - "+.goofish.com"
+  - "+.idlefish.com"
+  - "+.aliyun.com"
+  - "+.aliyuncs.com"
+  - "+.mmstat.com"
+  - "+.cainiao.com"
+  - "+.amap.com"
+  - "+.autonavi.com"
+  - "+.115.com"
+  - "+.115cdn.com"
+  - "+.115cdn.net"
+  - "+.115img.com"
+  - "+.116cd.cn"
+  - "+.116cd.com"
+  - "+.116cd.net"
+  - "+.anxia.com"
+  - "+.sq.cc"
+  - fhnfile.oss-cn-shenzhen.aliyuncs.com
+tun:
+  enable: false
+  stack: mixed
+  mtu: 1492
+  dns-hijack:
+  - any:53
+  - tcp://any:53
+  auto-route: true
+  auto-detect-interface: true
+  strict-route: true
 
 profile:
   store-selected: true
