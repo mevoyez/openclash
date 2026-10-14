@@ -346,11 +346,145 @@ proxy-groups:
 
 # ---------------- 分流规则：外部规则集优先，GeoSite/GeoIP 作为补充与兜底 ----------------
 rules:
+# 核心优化：强制阿里系应用放弃 QUIC (UDP 443)，瞬间回退 TCP 解决转圈慢的问题
+  - AND,((NETWORK,UDP),(DST-PORT,443),(GEOSITE,alibaba)),REJECT
+
+# 局域网与私有 IP 放行 
+  - IP-CIDR6,::1/128,DIRECT,no-resolve
+  - IP-CIDR6,fc00::/7,DIRECT,no-resolve
+  - IP-CIDR6,fe80::/10,DIRECT,no-resolve
+  - IP-CIDR6,ff00::/8,DIRECT,no-resolve
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+  - IP-CIDR,224.0.0.0/4,DIRECT,no-resolve
+  - IP-CIDR,240.0.0.0/4,DIRECT,no-resolve
+# 核心优化：阿里系服务直连 (替代原本冗长的 DOMAIN-SUFFIX，涵盖更全)
+  - GEOSITE,alibaba,DIRECT
+
   # 局域网 / 私有域名与 IP
   - GEOSITE,private,DIRECT
   - GEOIP,LAN,DIRECT,no-resolve
   - RULE-SET,private,DIRECT
   - RULE-SET,lancidr,DIRECT,no-resolve
+
+# 国内 App 专属直连
+  - DOMAIN-SUFFIX,qq.com,DIRECT
+  - DOMAIN-SUFFIX,tencent.com,DIRECT
+  - DOMAIN-SUFFIX,wechat.com,DIRECT
+  - DOMAIN-SUFFIX,servicewechat.com,DIRECT
+  - DOMAIN-SUFFIX,gtimg.com,DIRECT
+  - DOMAIN-SUFFIX,gtimg.cn,DIRECT
+  - DOMAIN-SUFFIX,qpic.cn,DIRECT
+  - DOMAIN-SUFFIX,qlogo.cn,DIRECT
+  - DOMAIN-SUFFIX,tenpay.com,DIRECT
+  - DOMAIN-SUFFIX,myqcloud.com,DIRECT
+  - DOMAIN-SUFFIX,qcloud.com,DIRECT
+  - DOMAIN-SUFFIX,douyin.com,DIRECT
+  - DOMAIN-SUFFIX,douyincdn.com,DIRECT
+  - DOMAIN-SUFFIX,douyinpic.com,DIRECT
+  - DOMAIN-SUFFIX,douyinstatic.com,DIRECT
+  - DOMAIN-SUFFIX,douyinliving.com,DIRECT
+  - DOMAIN-SUFFIX,iesdouyin.com,DIRECT
+  - DOMAIN-SUFFIX,douyinvod.com,DIRECT
+  - DOMAIN-SUFFIX,douyinvideo.net,DIRECT
+  - DOMAIN-SUFFIX,amemv.com,DIRECT
+  - DOMAIN-SUFFIX,snssdk.com,DIRECT
+  - DOMAIN-SUFFIX,byteimg.com,DIRECT
+  - DOMAIN-SUFFIX,bytecdn.cn,DIRECT
+  - DOMAIN-SUFFIX,ibytedtos.com,DIRECT
+  - DOMAIN-SUFFIX,zijieapi.com,DIRECT
+  - DOMAIN-SUFFIX,pstatp.com,DIRECT
+  - DOMAIN-SUFFIX,toutiao.com,DIRECT
+  - DOMAIN-SUFFIX,toutiaovod.com,DIRECT
+  - DOMAIN-SUFFIX,bytedance.net,DIRECT
+  - DOMAIN-SUFFIX,xiaohongshu.com,DIRECT
+  - DOMAIN-SUFFIX,xhscdn.com,DIRECT
+  - DOMAIN-SUFFIX,xhscdn.net,DIRECT
+  - DOMAIN-SUFFIX,xhslink.com,DIRECT
+  - DOMAIN-SUFFIX,xhsimg.com,DIRECT
+
+# 115 专属直连
+  - DOMAIN-SUFFIX,115.com,DIRECT
+  - DOMAIN-SUFFIX,115cdn.com,DIRECT
+  - DOMAIN-SUFFIX,115cdn.net,DIRECT
+  - DOMAIN-SUFFIX,115img.com,DIRECT
+  - DOMAIN-SUFFIX,116cd.cn,DIRECT
+  - DOMAIN-SUFFIX,116cd.com,DIRECT
+  - DOMAIN-SUFFIX,116cd.net,DIRECT
+  - DOMAIN-SUFFIX,anxia.com,DIRECT
+  - DOMAIN-SUFFIX,sq.cc,DIRECT
+  - DOMAIN,fhnfile.oss-cn-shenzhen.aliyuncs.com,DIRECT
+
+# 测速与连通性检测直连，避免把宽带测速测成代理节点速度
+  - DOMAIN-SUFFIX,speedtest.net,DIRECT
+  - DOMAIN-SUFFIX,ooklaserver.net,DIRECT
+  - DOMAIN-SUFFIX,speedtestcustom.com,DIRECT
+  - DOMAIN-SUFFIX,speed.cloudflare.com,DIRECT
+  - DOMAIN-SUFFIX,measurementlab.net,DIRECT
+  - DOMAIN-SUFFIX,speedtest.cn,DIRECT
+
+# GitHub 必须置于 Microsoft 直连规则之前，避免被 Microsoft 规则提前匹配
+  - GEOSITE,github,PROXY
+  - DOMAIN-SUFFIX,github.com,PROXY
+  - DOMAIN-SUFFIX,githubusercontent.com,PROXY
+  - DOMAIN-SUFFIX,githubassets.com,PROXY
+  - DOMAIN-SUFFIX,ghcr.io,PROXY
+  - DOMAIN-SUFFIX,github.io,PROXY
+  - DOMAIN-SUFFIX,githubapp.com,PROXY
+  - DOMAIN-SUFFIX,github.dev,PROXY
+  - DOMAIN-SUFFIX,githubcopilot.com,PROXY
+
+# Microsoft/Office/Windows 服务直连，避免后台服务误走不稳定代理
+  - GEOSITE,microsoft,DIRECT
+  - DOMAIN-SUFFIX,microsoft.com,DIRECT
+  - DOMAIN-SUFFIX,msftconnecttest.com,DIRECT
+  - DOMAIN-SUFFIX,msftncsi.com,DIRECT
+  - DOMAIN-SUFFIX,windowsupdate.com,DIRECT
+  - DOMAIN-SUFFIX,office.com,DIRECT
+  - DOMAIN-SUFFIX,office.net,DIRECT
+  - DOMAIN-SUFFIX,office365.com,DIRECT
+  - DOMAIN-SUFFIX,live.com,DIRECT
+  - DOMAIN-SUFFIX,live.net,DIRECT
+  - DOMAIN-SUFFIX,outlook.com,DIRECT
+  - DOMAIN-SUFFIX,microsoftonline.com,DIRECT
+  - DOMAIN-SUFFIX,microsoftonline-p.com,DIRECT
+  - DOMAIN-SUFFIX,sharepoint.com,DIRECT
+  - DOMAIN-SUFFIX,sharepointonline.com,DIRECT
+  - DOMAIN-SUFFIX,onedrive.com,DIRECT
+  - DOMAIN-SUFFIX,skype.com,DIRECT
+  - DOMAIN-SUFFIX,azureedge.net,DIRECT
+  - DOMAIN-SUFFIX,msauth.net,DIRECT
+  - DOMAIN-SUFFIX,msauthimages.net,DIRECT
+  - DOMAIN-SUFFIX,msftauth.net,DIRECT
+  - DOMAIN-SUFFIX,msftauthimages.net,DIRECT
+
+# 代理规则 (AI 品牌与 Google 核心服务)
+  - DOMAIN-SUFFIX,openai.com,AIGC
+  - DOMAIN-SUFFIX,chatgpt.com,AIGC
+  - DOMAIN-SUFFIX,anthropic.com,AIGC
+  - DOMAIN-SUFFIX,claude.ai,AIGC
+  - DOMAIN-SUFFIX,google.com,Proxy
+  - DOMAIN-SUFFIX,googleapis.com,Proxy
+  - DOMAIN-SUFFIX,googleapis.cn,Proxy
+  - DOMAIN-SUFFIX,gstatic.com,Proxy
+  - DOMAIN-SUFFIX,gvt1.com,Proxy
+  - DOMAIN-SUFFIX,gvt2.com,Proxy
+  - DOMAIN-SUFFIX,gvt3.com,Proxy
+  - DOMAIN-SUFFIX,googleusercontent.com,Proxy
+  - DOMAIN-SUFFIX,ggpht.com,Proxy
+  - DOMAIN-SUFFIX,android.com,Proxy
+  - DOMAIN-SUFFIX,android.clients.google.com,Proxy
+  - DOMAIN-SUFFIX,android.googleapis.com,Proxy
+  - DOMAIN-SUFFIX,dl.google.com,Proxy
+  - DOMAIN-SUFFIX,dl-ssl.google.com,Proxy
+  - DOMAIN-SUFFIX,play.googleapis.com,Proxy
+  - DOMAIN-SUFFIX,market.android.com,Proxy
+  - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,Proxy
+
 
   # 广告：使用独立策略组，可在面板切换 REJECT / DIRECT
   - RULE-SET,reject,广告拦截
