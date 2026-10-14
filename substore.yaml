@@ -17,9 +17,6 @@ log-level: warning
 ipv6: true
 unified-delay: true
 tcp-concurrent: true
-profile:
-  store-selected: true
-  store-fake-ip: true
 geodata-mode: true
 geodata-loader: memconservative
 geo-auto-update: true
@@ -260,7 +257,8 @@ rule-providers:
     url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt
     path: ./ruleset/loyalsoldier/proxy.yaml
     interval: 86400
-      ai:
+
+  ai:
     type: http
     behavior: classical
     format: yaml
@@ -583,15 +581,15 @@ rules:
   - DOMAIN-SUFFIX,speedtest.cn,DIRECT
 
 # GitHub 必须置于 Microsoft 直连规则之前，避免被 Microsoft 规则提前匹配
-  - GEOSITE,github,PROXY
-  - DOMAIN-SUFFIX,github.com,PROXY
-  - DOMAIN-SUFFIX,githubusercontent.com,PROXY
-  - DOMAIN-SUFFIX,githubassets.com,PROXY
-  - DOMAIN-SUFFIX,ghcr.io,PROXY
-  - DOMAIN-SUFFIX,github.io,PROXY
-  - DOMAIN-SUFFIX,githubapp.com,PROXY
-  - DOMAIN-SUFFIX,github.dev,PROXY
-  - DOMAIN-SUFFIX,githubcopilot.com,PROXY
+  - GEOSITE,github,Proxy
+  - DOMAIN-SUFFIX,github.com,Proxy
+  - DOMAIN-SUFFIX,githubusercontent.com,Proxy
+  - DOMAIN-SUFFIX,githubassets.com,Proxy
+  - DOMAIN-SUFFIX,ghcr.io,Proxy
+  - DOMAIN-SUFFIX,github.io,Proxy
+  - DOMAIN-SUFFIX,githubapp.com,Proxy
+  - DOMAIN-SUFFIX,github.dev,Proxy
+  - DOMAIN-SUFFIX,githubcopilot.com,Proxy
 
 # Microsoft/Office/Windows 服务直连，避免后台服务误走不稳定代理
   - GEOSITE,microsoft,DIRECT
@@ -646,12 +644,12 @@ rules:
   - GEOSITE,category-ads-all,广告拦截
 
   # 用户希望明确走代理的 GitHub 相关域名
-  - DOMAIN-SUFFIX,github.com,Proxy
-  - DOMAIN-SUFFIX,githubusercontent.com,Proxy
-  - DOMAIN-SUFFIX,githubassets.com,Proxy
-  - DOMAIN-SUFFIX,githubapp.com,Proxy
-  - DOMAIN-SUFFIX,github.io,Proxy
-  - DOMAIN-SUFFIX,ghcr.io,Proxy
+  #- DOMAIN-SUFFIX,github.com,Proxy
+  #- DOMAIN-SUFFIX,githubusercontent.com,Proxy
+  #- DOMAIN-SUFFIX,githubassets.com,Proxy
+  #- DOMAIN-SUFFIX,githubapp.com,Proxy
+  #- DOMAIN-SUFFIX,github.io,Proxy
+  #- DOMAIN-SUFFIX,ghcr.io,Proxy
 
   # AI 服务
   - RULE-SET,ai,AIGC
