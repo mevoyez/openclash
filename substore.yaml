@@ -643,13 +643,6 @@ rules:
   - RULE-SET,reject,广告拦截
   - GEOSITE,category-ads-all,广告拦截
 
-  # 用户希望明确走代理的 GitHub 相关域名
-  #- DOMAIN-SUFFIX,github.com,Proxy
-  #- DOMAIN-SUFFIX,githubusercontent.com,Proxy
-  #- DOMAIN-SUFFIX,githubassets.com,Proxy
-  #- DOMAIN-SUFFIX,githubapp.com,Proxy
-  #- DOMAIN-SUFFIX,github.io,Proxy
-  #- DOMAIN-SUFFIX,ghcr.io,Proxy
 
   # AI 服务
   - RULE-SET,ai,AIGC
