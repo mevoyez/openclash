@@ -5,8 +5,6 @@
 # 只使用一个 SubStore Provider；不要求节点名带 [A]/[B] 前缀。
 # 以后更换或新增机场，只需在 Sub-Store 组合订阅中管理，OpenClash 不用新增 Provider。
 #
-# 保留原有服务策略组及地区测速结构，移除按机场名称区分的策略组。
-# 加入 Loyalsoldier 外部规则集，并保留 GeoSite/GeoIP 规则作为补充与兜底。
 # ============================================================
 
 mixed-port: 7890
@@ -207,9 +205,12 @@ dns:
     - 223.5.5.5
     - 119.29.29.29
     "geosite:github,google,youtube,telegram,geolocation-!cn":
-    - https://1.1.1.1/dns-query#PROXY
-    - https://dns.google/dns-query#PROXY
+    - https://1.1.1.1/dns-query#Proxy
+    - https://dns.google/dns-query#Proxy
 
+    "geosite:spotify":
+    - https://1.1.1.1/dns-query#Proxy
+    - https://dns.google/dns-query#Proxy
 # ---------------- Sub-Store 单一组合订阅 ----------------
 proxy-providers:
   SubStore组合订阅:
@@ -235,77 +236,6 @@ rule-providers:
     format: yaml
     url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt
     path: ./ruleset/loyalsoldier/reject.yaml
-    interval: 86400
-  private:
-    type: http
-    behavior: domain
-    format: text
-    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt
-    path: ./ruleset/loyalsoldier/private.yaml
-    interval: 86400
-  applications:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt
-    path: ./ruleset/loyalsoldier/applications.yaml
-    interval: 86400
-  proxy:
-    type: http
-    behavior: domain
-    format: text
-    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt
-    path: ./ruleset/loyalsoldier/proxy.yaml
-    interval: 86400
-
-  ai:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://ddgksf2013.top/filter/Ai.yaml
-    path: ./ruleset/loyalsoldier/ai.yaml
-    interval: 86400
-  direct:
-    type: http
-    behavior: domain
-    format: text
-    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt
-    path: ./ruleset/loyalsoldier/direct.yaml
-    interval: 86400
-  gfw:
-    type: http
-    behavior: domain
-    format: yaml
-    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt
-    path: ./ruleset/loyalsoldier/gfw.yaml
-    interval: 86400
-  tld-not-cn:
-    type: http
-    behavior: domain
-    format: text
-    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/tld-not-cn.txt
-    path: ./ruleset/loyalsoldier/tld-not-cn.yaml
-    interval: 86400
-  telegramcidr:
-    type: http
-    behavior: ipcidr
-    format: yaml
-    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt
-    path: ./ruleset/loyalsoldier/telegramcidr.yaml
-    interval: 86400
-  cncidr:
-    type: http
-    behavior: ipcidr
-    format: yaml
-    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt
-    path: ./ruleset/loyalsoldier/cncidr.yaml
-    interval: 86400
-  lancidr:
-    type: http
-    behavior: ipcidr
-    format: yaml
-    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt
-    path: ./ruleset/loyalsoldier/lancidr.yaml
     interval: 86400
 
 # ---------------- 策略组 ----------------
@@ -521,8 +451,6 @@ rules:
   # 局域网 / 私有域名与 IP
   - GEOSITE,private,DIRECT
   - GEOIP,LAN,DIRECT,no-resolve
-  - RULE-SET,private,DIRECT
-  - RULE-SET,lancidr,DIRECT,no-resolve
 
 # 国内 App 专属直连
   - DOMAIN-SUFFIX,qq.com,DIRECT
@@ -579,7 +507,7 @@ rules:
   - DOMAIN-SUFFIX,speed.cloudflare.com,DIRECT
   - DOMAIN-SUFFIX,measurementlab.net,DIRECT
   - DOMAIN-SUFFIX,speedtest.cn,DIRECT
-
+  
 # GitHub 必须置于 Microsoft 直连规则之前，避免被 Microsoft 规则提前匹配
   - GEOSITE,github,Proxy
   - DOMAIN-SUFFIX,github.com,Proxy
@@ -592,7 +520,7 @@ rules:
   - DOMAIN-SUFFIX,githubcopilot.com,Proxy
 
 # Microsoft/Office/Windows 服务直连，避免后台服务误走不稳定代理
-  - GEOSITE,microsoft,DIRECT
+  - GEOSITE,microsoft,Microsoft
   - DOMAIN-SUFFIX,microsoft.com,DIRECT
   - DOMAIN-SUFFIX,msftconnecttest.com,DIRECT
   - DOMAIN-SUFFIX,msftncsi.com,DIRECT
@@ -638,48 +566,34 @@ rules:
   - DOMAIN-SUFFIX,market.android.com,Proxy
   - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,Proxy
 
-
   # 广告：使用独立策略组，可在面板切换 REJECT / DIRECT
-  - RULE-SET,reject,广告拦截
   - GEOSITE,category-ads-all,广告拦截
-
-
+  - RULE-SET,reject,广告拦截
+ 
   # AI 服务
-  - RULE-SET,ai,AIGC
   - GEOSITE,openai,AIGC
   - GEOSITE,anthropic,AIGC
   - GEOSITE,category-ai-!cn,AIGC
 
-  # Apple、微软
+  # Apple
   - GEOSITE,apple-cn,Apple
   - GEOSITE,apple,Apple
-  - GEOSITE,microsoft,Microsoft
+ 
 
   # Telegram、游戏、流媒体与国内视频
   - GEOSITE,telegram,Telegram
-  - RULE-SET,telegramcidr,Telegram,no-resolve
   - GEOSITE,category-games,Game
   - GEOSITE,youtube,YouTube
   - GEOSITE,netflix,Netflix
   - GEOIP,netflix,Netflix,no-resolve
   - GEOSITE,disney,Disney+
-  - GEOSITE,spotify,Spotify
+  - GEOSITE,spotify,Spotify,no-resolve
   - GEOSITE,tiktok,TikTok
   - GEOSITE,bilibili,BiliBili
-
-  # 直连软件与常见直连域名
-  - RULE-SET,applications,DIRECT
-  - RULE-SET,direct,DIRECT
-
-  # 外部代理规则：GFWList / 代理域名 / 非中国大陆 TLD
-  - RULE-SET,proxy,Proxy
-  - RULE-SET,gfw,Proxy
-  - RULE-SET,tld-not-cn,Proxy
 
   # 保留 GeoSite/GeoIP 国内外规则作为补充和兜底
   - GEOSITE,geolocation-cn,DIRECT
   - GEOSITE,geolocation-!cn,Proxy
   - GEOSITE,cn,DIRECT
-  - RULE-SET,cncidr,DIRECT,no-resolve
   - GEOIP,CN,DIRECT,no-resolve
   - MATCH,Proxy
