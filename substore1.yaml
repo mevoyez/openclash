@@ -1,0 +1,594 @@
+# ============================================================
+# OpenClash / Mihomo 单 Provider 配置（Sub-Store 组合订阅）
+#
+# 前置条件：Sub-Store 组合订阅输出链接已从路由器测试 HTTP 200。
+# 只使用一个 SubStore Provider；不要求节点名带 [A]/[B] 前缀。
+# 以后更换或新增机场，只需在 Sub-Store 组合订阅中管理，OpenClash 不用新增 Provider。
+#
+# ============================================================
+
+mixed-port: 7890
+allow-lan: true
+bind-address: "*"
+mode: rule
+log-level: warning
+ipv6: true
+unified-delay: true
+tcp-concurrent: true
+geodata-mode: true
+geodata-loader: memconservative
+geo-auto-update: true
+geo-update-interval: 24
+geox-url:
+  geoip: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
+  geosite: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
+  mmdb: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: true
+  sniff:
+    TLS:
+      ports:
+      - 443
+      - 8443
+    HTTP:
+      ports:
+      - 80
+      - 8080-8880
+      override-destination: true
+    QUIC:
+      ports:
+      - 443
+      - 8443
+  skip-domain:
+  - Mijia Cloud
+  - dlg.io.mi.com
+  - "+.push.apple.com"
+  - "+.googlevideo.com"
+  - "+.qq.com"
+  - "+.tencent.com"
+  - "+.wechat.com"
+  - "+.servicewechat.com"
+  - "+.gtimg.com"
+  - "+.gtimg.cn"
+  - "+.qpic.cn"
+  - "+.qlogo.cn"
+  - "+.tenpay.com"
+  - "+.myqcloud.com"
+  - "+.qcloud.com"
+  - "+.douyin.com"
+  - "+.douyincdn.com"
+  - "+.douyinpic.com"
+  - "+.douyinstatic.com"
+  - "+.douyinliving.com"
+  - "+.iesdouyin.com"
+  - "+.douyinvod.com"
+  - "+.douyinvideo.net"
+  - "+.amemv.com"
+  - "+.snssdk.com"
+  - "+.byteimg.com"
+  - "+.bytecdn.cn"
+  - "+.ibytedtos.com"
+  - "+.zijieapi.com"
+  - "+.pstatp.com"
+  - "+.toutiao.com"
+  - "+.toutiaovod.com"
+  - "+.bytedance.net"
+  - "+.xiaohongshu.com"
+  - "+.xhscdn.com"
+  - "+.xhscdn.net"
+  - "+.xhslink.com"
+  - "+.xhsimg.com"
+  - "+.taobao.com"
+  - "+.tmall.com"
+  - "+.tbcdn.cn"
+  - "+.alicdn.com"
+  - "+.alibaba.com"
+  - "+.alibabausercontent.com"
+  - "+.alipay.com"
+  - "+.alipayobjects.com"
+  - "+.goofish.com"
+  - "+.idlefish.com"
+  - "+.aliyun.com"
+  - "+.aliyuncs.com"
+  - "+.mmstat.com"
+  - "+.cainiao.com"
+  - "+.amap.com"
+  - "+.autonavi.com"
+  - "+.115.com"
+  - "+.115cdn.com"
+  - "+.115cdn.net"
+  - "+.115img.com"
+  - "+.116cd.cn"
+  - "+.116cd.com"
+  - "+.116cd.net"
+  - "+.anxia.com"
+  - "+.sq.cc"
+  - fhnfile.oss-cn-shenzhen.aliyuncs.com
+tun:
+  enable: false
+  stack: mixed
+  mtu: 1492
+  dns-hijack:
+  - any:53
+  - tcp://any:53
+  auto-route: true
+  auto-detect-interface: true
+  strict-route: true
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+# ---------------- DNS ----------------
+dns:
+  enable: true
+  listen: 0.0.0.0:7874
+  cache-algorithm: arc
+  ipv6: true
+  prefer-ipv6: false
+  prefer-h3: false
+  use-hosts: true
+  use-system-hosts: true
+  respect-rules: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-range6: fdfe:dcba:9876::1/64
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+  - "*.lan"
+  - "*.local"
+  - "+.localdomain"
+  - localhost.ptlogin2.qq.com
+  - "+.qq.com"
+  - "+.tencent.com"
+  - "+.wechat.com"
+  - "+.servicewechat.com"
+  - "+.gtimg.com"
+  - "+.gtimg.cn"
+  - "+.qpic.cn"
+  - "+.qlogo.cn"
+  - "+.tenpay.com"
+  - "+.myqcloud.com"
+  - "+.qcloud.com"
+  - "+.douyin.com"
+  - "+.douyincdn.com"
+  - "+.douyinpic.com"
+  - "+.douyinstatic.com"
+  - "+.douyinliving.com"
+  - "+.iesdouyin.com"
+  - "+.douyinvod.com"
+  - "+.douyinvideo.net"
+  - "+.amemv.com"
+  - "+.snssdk.com"
+  - "+.byteimg.com"
+  - "+.bytecdn.cn"
+  - "+.ibytedtos.com"
+  - "+.zijieapi.com"
+  - "+.pstatp.com"
+  - "+.toutiao.com"
+  - "+.toutiaovod.com"
+  - "+.bytedance.net"
+  - "+.xiaohongshu.com"
+  - "+.xhscdn.com"
+  - "+.xhscdn.net"
+  - "+.xhslink.com"
+  - "+.xhsimg.com"
+  - time.windows.com
+  - time.apple.com
+  - time.android.com
+  - "+.xn--ngstr-lra8j.com"
+  - "+.ntp.org.cn"
+  - "+.pool.ntp.org"
+  default-nameserver:
+  - 223.5.5.5
+  - 119.29.29.29
+  nameserver-policy:
+    "geosite:private,cn,geolocation-cn,apple-cn,microsoft@cn,steam@cn":
+    - 223.5.5.5
+    - 119.29.29.29
+    "geosite:microsoft":
+    - 223.5.5.5
+    - 119.29.29.29
+    "+.speedtest.net":
+    - 223.5.5.5
+    - 119.29.29.29
+    "+.ooklaserver.net":
+    - 223.5.5.5
+    - 119.29.29.29
+    "+.speed.cloudflare.com":
+    - 223.5.5.5
+    - 119.29.29.29
+    "+.measurementlab.net":
+    - 223.5.5.5
+    - 119.29.29.29
+    "geosite:github,google,youtube,telegram,geolocation-!cn":
+    - https://1.1.1.1/dns-query#Proxy
+    - https://dns.google/dns-query#Proxy
+
+    "geosite:spotify":
+    - https://1.1.1.1/dns-query#Proxy
+    - https://dns.google/dns-query#Proxy
+# ---------------- Sub-Store 单一组合订阅 ----------------
+proxy-providers:
+  SubStore组合订阅:
+    type: http
+    # 使用已验证返回 HTTP 200 的 Sub-Store 组合订阅链接；无需机场名前缀
+    url: "http://192.168.11.1:3002/RArdCYx05FqoorulLZ4vkCoPGc9RFXdA/download/collection/substore?target=ClashMeta"
+    interval: 3600
+    path: ./providers/substore_combined.yaml
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5000
+      lazy: true
+    override:
+      udp: true
+
+# ---------------- 外部规则集（Loyalsoldier）示例 ----------------
+#rule-providers:
+#  reject:
+#    type: http
+#    behavior: domain
+#    format: yaml
+#    url: https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt
+#    path: ./ruleset/loyalsoldier/reject.yaml
+#    interval: 86400
+
+# ---------------- 策略组 ----------------
+proxy-groups:
+  # 主要手动策略组
+  - name: Proxy
+    type: select
+    proxies:
+      - 自动选择
+      - 故障转移
+      - "🇭🇰 香港节点"
+      - "🇺🇸 美国节点"
+      - "🇯🇵 日本节点"
+      - "🇰🇷 韩国节点"
+      - "🇹🇼 台湾节点"
+      - "🇸🇬 新加坡节点"
+    # 同时显示组合订阅内所有原始节点，无需 [A]/[B] 前缀
+    use: [SubStore组合订阅]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Surge.png
+
+  - name: Apple
+    type: select
+    proxies: [DIRECT, Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Apple_Arcade.png
+
+  - name: AIGC
+    type: select
+    proxies: [AI节点, Proxy]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/ChatGPT.png
+
+  - name: Telegram
+    type: select
+    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Telegram.png
+
+  - name: Netflix
+    type: select
+    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Netflix.png
+
+  - name: "Disney+"
+    type: select
+    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Disney.png
+
+  - name: YouTube
+    type: select
+    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/YouTube.png
+
+  - name: Spotify
+    type: select
+    proxies: [DIRECT, Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Spotify.png
+
+  - name: TikTok
+    type: select
+    proxies: ["🇸🇬 新加坡节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/TikTok.png
+
+  - name: BiliBili
+    type: select
+    proxies: [DIRECT, "🇭🇰 香港节点", "🇹🇼 台湾节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Bilibili.png
+
+  - name: GlobalMedia
+    type: select
+    proxies: [Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/GlobalMedia.png
+
+  - name: Microsoft
+    type: select
+    proxies: [DIRECT, Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Windows.png
+
+  - name: Game
+    type: select
+    proxies: [DIRECT, Proxy, "🇭🇰 香港节点", "🇺🇸 美国节点", "🇯🇵 日本节点", "🇰🇷 韩国节点", "🇸🇬 新加坡节点"]
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Game.png
+
+  # 地区节点组：统一从 Sub-Store 组合订阅筛选并测速
+  - name: "🇭🇰 香港节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇭🇰|香港|Hong\s?Kong|\bHK\b|\bHKG\b)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-Hong_Kong.png
+
+  - name: "🇺🇸 美国节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇺🇸|美国|United\s?States|\bUSA\b|\bUS\b)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-United_States.png
+
+  - name: "🇯🇵 日本节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇯🇵|日本|Japan|\bJP\b)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-Japan.png
+
+  - name: "🇰🇷 韩国节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇰🇷|韩国|Korea|\bKR\b|South\s?Korea)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-South_Korea.png
+
+  - name: "🇹🇼 台湾节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇹🇼|台湾|Taiwan|\bTW\b)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-China.png
+
+  - name: "🇸🇬 新加坡节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(🇸🇬|新加坡|Singapore|\bSG\b)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/Country-Singapore.png
+
+  - name: "AI节点"
+    type: url-test
+    use: [SubStore组合订阅]
+    filter: '(?i)(AI|GPT|ChatGPT|OpenAI|Gemini|Claude|Copilot|LLM)'
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+    disable-udp: false
+    icon: https://raw.githubusercontent.com/Rabbit-Spec/Surge/Master/Conf/icon/AI.png
+
+  # 手动主选择以外的测速/容错选择组
+  - name: 自动选择
+    type: url-test
+    use: [SubStore组合订阅]
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    timeout: 5000
+    lazy: true
+    hidden: true
+
+  - name: 故障转移
+    type: fallback
+    use: [SubStore组合订阅]
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    timeout: 5000
+    lazy: true
+    hidden: true
+
+# ---------------- 分流规则：外部规则集优先，GeoSite/GeoIP 作为补充与兜底 ----------------
+rules:
+# 核心优化：强制阿里系应用放弃 QUIC (UDP 443)，瞬间回退 TCP 解决转圈慢的问题
+  - AND,((NETWORK,UDP),(DST-PORT,443),(GEOSITE,alibaba)),REJECT
+
+# 局域网与私有 IP 放行 
+  - IP-CIDR6,::1/128,DIRECT,no-resolve
+  - IP-CIDR6,fc00::/7,DIRECT,no-resolve
+  - IP-CIDR6,fe80::/10,DIRECT,no-resolve
+  - IP-CIDR6,ff00::/8,DIRECT,no-resolve
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+  - IP-CIDR,224.0.0.0/4,DIRECT,no-resolve
+  - IP-CIDR,240.0.0.0/4,DIRECT,no-resolve
+# 核心优化：阿里系服务直连 (替代原本冗长的 DOMAIN-SUFFIX，涵盖更全)
+  - GEOSITE,alibaba,DIRECT
+
+  # 局域网 / 私有域名与 IP
+  - GEOSITE,private,DIRECT
+  - GEOIP,LAN,DIRECT,no-resolve
+
+# 国内 App 专属直连
+  - DOMAIN-SUFFIX,qq.com,DIRECT
+  - DOMAIN-SUFFIX,tencent.com,DIRECT
+  - DOMAIN-SUFFIX,wechat.com,DIRECT
+  - DOMAIN-SUFFIX,servicewechat.com,DIRECT
+  - DOMAIN-SUFFIX,gtimg.com,DIRECT
+  - DOMAIN-SUFFIX,gtimg.cn,DIRECT
+  - DOMAIN-SUFFIX,qpic.cn,DIRECT
+  - DOMAIN-SUFFIX,qlogo.cn,DIRECT
+  - DOMAIN-SUFFIX,tenpay.com,DIRECT
+  - DOMAIN-SUFFIX,myqcloud.com,DIRECT
+  - DOMAIN-SUFFIX,qcloud.com,DIRECT
+  - DOMAIN-SUFFIX,douyin.com,DIRECT
+  - DOMAIN-SUFFIX,douyincdn.com,DIRECT
+  - DOMAIN-SUFFIX,douyinpic.com,DIRECT
+  - DOMAIN-SUFFIX,douyinstatic.com,DIRECT
+  - DOMAIN-SUFFIX,douyinliving.com,DIRECT
+  - DOMAIN-SUFFIX,iesdouyin.com,DIRECT
+  - DOMAIN-SUFFIX,douyinvod.com,DIRECT
+  - DOMAIN-SUFFIX,douyinvideo.net,DIRECT
+  - DOMAIN-SUFFIX,amemv.com,DIRECT
+  - DOMAIN-SUFFIX,snssdk.com,DIRECT
+  - DOMAIN-SUFFIX,byteimg.com,DIRECT
+  - DOMAIN-SUFFIX,bytecdn.cn,DIRECT
+  - DOMAIN-SUFFIX,ibytedtos.com,DIRECT
+  - DOMAIN-SUFFIX,zijieapi.com,DIRECT
+  - DOMAIN-SUFFIX,pstatp.com,DIRECT
+  - DOMAIN-SUFFIX,toutiao.com,DIRECT
+  - DOMAIN-SUFFIX,toutiaovod.com,DIRECT
+  - DOMAIN-SUFFIX,bytedance.net,DIRECT
+  - DOMAIN-SUFFIX,xiaohongshu.com,DIRECT
+  - DOMAIN-SUFFIX,xhscdn.com,DIRECT
+  - DOMAIN-SUFFIX,xhscdn.net,DIRECT
+  - DOMAIN-SUFFIX,xhslink.com,DIRECT
+  - DOMAIN-SUFFIX,xhsimg.com,DIRECT
+
+# 115 专属直连
+  - DOMAIN-SUFFIX,115.com,DIRECT
+  - DOMAIN-SUFFIX,115cdn.com,DIRECT
+  - DOMAIN-SUFFIX,115cdn.net,DIRECT
+  - DOMAIN-SUFFIX,115img.com,DIRECT
+  - DOMAIN-SUFFIX,116cd.cn,DIRECT
+  - DOMAIN-SUFFIX,116cd.com,DIRECT
+  - DOMAIN-SUFFIX,116cd.net,DIRECT
+  - DOMAIN-SUFFIX,anxia.com,DIRECT
+  - DOMAIN-SUFFIX,sq.cc,DIRECT
+  - DOMAIN,fhnfile.oss-cn-shenzhen.aliyuncs.com,DIRECT
+
+# 测速与连通性检测直连，避免把宽带测速测成代理节点速度
+  - DOMAIN-SUFFIX,speedtest.net,DIRECT
+  - DOMAIN-SUFFIX,ooklaserver.net,DIRECT
+  - DOMAIN-SUFFIX,speedtestcustom.com,DIRECT
+  - DOMAIN-SUFFIX,speed.cloudflare.com,DIRECT
+  - DOMAIN-SUFFIX,measurementlab.net,DIRECT
+  - DOMAIN-SUFFIX,speedtest.cn,DIRECT
+  
+# GitHub 必须置于 Microsoft 直连规则之前，避免被 Microsoft 规则提前匹配
+  - GEOSITE,github,Proxy
+  - DOMAIN-SUFFIX,github.com,Proxy
+  - DOMAIN-SUFFIX,githubusercontent.com,Proxy
+  - DOMAIN-SUFFIX,githubassets.com,Proxy
+  - DOMAIN-SUFFIX,ghcr.io,Proxy
+  - DOMAIN-SUFFIX,github.io,Proxy
+  - DOMAIN-SUFFIX,githubapp.com,Proxy
+  - DOMAIN-SUFFIX,github.dev,Proxy
+  - DOMAIN-SUFFIX,githubcopilot.com,Proxy
+
+# Microsoft/Office/Windows 服务直连，避免后台服务误走不稳定代理
+  - GEOSITE,microsoft,Microsoft
+  - DOMAIN-SUFFIX,microsoft.com,DIRECT
+  - DOMAIN-SUFFIX,msftconnecttest.com,DIRECT
+  - DOMAIN-SUFFIX,msftncsi.com,DIRECT
+  - DOMAIN-SUFFIX,windowsupdate.com,DIRECT
+  - DOMAIN-SUFFIX,office.com,DIRECT
+  - DOMAIN-SUFFIX,office.net,DIRECT
+  - DOMAIN-SUFFIX,office365.com,DIRECT
+  - DOMAIN-SUFFIX,live.com,DIRECT
+  - DOMAIN-SUFFIX,live.net,DIRECT
+  - DOMAIN-SUFFIX,outlook.com,DIRECT
+  - DOMAIN-SUFFIX,microsoftonline.com,DIRECT
+  - DOMAIN-SUFFIX,microsoftonline-p.com,DIRECT
+  - DOMAIN-SUFFIX,sharepoint.com,DIRECT
+  - DOMAIN-SUFFIX,sharepointonline.com,DIRECT
+  - DOMAIN-SUFFIX,onedrive.com,DIRECT
+  - DOMAIN-SUFFIX,skype.com,DIRECT
+  - DOMAIN-SUFFIX,azureedge.net,DIRECT
+  - DOMAIN-SUFFIX,msauth.net,DIRECT
+  - DOMAIN-SUFFIX,msauthimages.net,DIRECT
+  - DOMAIN-SUFFIX,msftauth.net,DIRECT
+  - DOMAIN-SUFFIX,msftauthimages.net,DIRECT
+
+# 代理规则 (AI 品牌与 Google 核心服务)
+  - DOMAIN-SUFFIX,openai.com,AIGC
+  - DOMAIN-SUFFIX,chatgpt.com,AIGC
+  - DOMAIN-SUFFIX,anthropic.com,AIGC
+  - DOMAIN-SUFFIX,claude.ai,AIGC
+  - DOMAIN-SUFFIX,google.com,Proxy
+  - DOMAIN-SUFFIX,googleapis.com,Proxy
+  - DOMAIN-SUFFIX,googleapis.cn,Proxy
+  - DOMAIN-SUFFIX,gstatic.com,Proxy
+  - DOMAIN-SUFFIX,gvt1.com,Proxy
+  - DOMAIN-SUFFIX,gvt2.com,Proxy
+  - DOMAIN-SUFFIX,gvt3.com,Proxy
+  - DOMAIN-SUFFIX,googleusercontent.com,Proxy
+  - DOMAIN-SUFFIX,ggpht.com,Proxy
+  - DOMAIN-SUFFIX,android.com,Proxy
+  - DOMAIN-SUFFIX,android.clients.google.com,Proxy
+  - DOMAIN-SUFFIX,android.googleapis.com,Proxy
+  - DOMAIN-SUFFIX,dl.google.com,Proxy
+  - DOMAIN-SUFFIX,dl-ssl.google.com,Proxy
+  - DOMAIN-SUFFIX,play.googleapis.com,Proxy
+  - DOMAIN-SUFFIX,market.android.com,Proxy
+  - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,Proxy
+
+  # 广告：使用独立策略组，可在面板切换 REJECT / DIRECT
+  - GEOSITE,category-ads-all,REJECT
+  #- RULE-SET,reject,REJECT
+ 
+  # AI 服务
+  - GEOSITE,openai,AIGC
+  - GEOSITE,anthropic,AIGC
+  - GEOSITE,category-ai-!cn,AIGC
+
+  # Apple
+  - GEOSITE,apple-cn,Apple
+  - GEOSITE,apple,Apple
+ 
+
+  # Telegram、游戏、流媒体与国内视频
+  - GEOSITE,telegram,Telegram
+  - GEOSITE,category-games,Game
+  - GEOSITE,youtube,YouTube
+  - GEOSITE,netflix,Netflix
+  - GEOIP,netflix,Netflix,no-resolve
+  - GEOSITE,disney,Disney+
+  - GEOSITE,spotify,Spotify,no-resolve
+  - GEOSITE,tiktok,TikTok
+  - GEOSITE,bilibili,BiliBili
+
+  # 保留 GeoSite/GeoIP 国内外规则作为补充和兜底
+  - GEOSITE,geolocation-cn,DIRECT
+  - GEOSITE,geolocation-!cn,Proxy
+  - GEOSITE,cn,DIRECT
+  - GEOIP,CN,DIRECT,no-resolve
+  - MATCH,Proxy
