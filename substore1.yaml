@@ -216,7 +216,7 @@ proxy-providers:
   SubStore组合订阅:
     type: http
     # 使用已验证返回 HTTP 200 的 Sub-Store 组合订阅链接；无需机场名前缀
-    url: "http://192.168.11.1:3002/RArdCYx05FqoorulLZ4vkCoPGc9RFXdA/download/collection/substore?target=ClashMeta"
+    url: "http://192.168.31.144:3002/sstore6f9a2c/download/collection/substore?target=ClashMeta"
     interval: 3600
     path: ./providers/substore_combined.yaml
     health-check:
